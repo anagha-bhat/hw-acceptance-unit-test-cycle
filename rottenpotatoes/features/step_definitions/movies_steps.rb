@@ -23,3 +23,31 @@ Then /I should see all the movies/ do
     step %{I should see "#{movie.title}"}
   end
 end
+
+Then /the director of "([^"]*)" should be "([^"]*)"/ do |movie, director|
+  if page.respond_to? :should
+    page.should have_content("Details about "+movie)
+    page.should have_content("Director: "+director)
+  else
+    assert page.has_content?("Details about "+movie)
+    assert page.has_content?("Director: "+director)
+  end
+end
+
+Then /(.*) seed movies should exist/ do | n_seeds |
+  expect(Movie.count).to eq n_seeds.to_i
+end
+
+Then /I should see the following movies: (.*)$/ do |movies_list|
+  movies = movies_list.split(', ')
+  movies.each do |movie|
+    expect(page).to have_content(movie)
+  end
+end
+
+Then /I should not see the following movies: (.*)$/ do |movies_list|
+  movies = movies_list.split(', ')
+  movies.each do |movie|
+    expect(page).to have_no_content(movie)
+  end
+end
